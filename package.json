@@ -1,9 +1,9 @@
 {
   "name": "rails-run-spec-vscode",
-  "displayName": "Rails Run Specs",
-  "description": "Rails Run Spec Files",
-  "version": "0.1.4",
-  "publisher": "noku",
+  "displayName": "Rails Run Specs *Revived*",
+  "description": "Run Rails Spec Files with VS Code ShortCuts",
+  "version": "0.0.1",
+  "publisher": "nialbima",
   "icon": "rspec.png",
   "galleryBanner": {
     "color": "#232323",
@@ -14,9 +14,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/noku/rails-run-spec-vscode.git"
+    "url": "https://github.com/nialbima/rails-run-spec-vscode.git"
   },
-  "homepage": "https://github.com/noku/rails-run-spec-vscode",
+  "homepage": "https://github.com/nialbima/rails-run-spec-vscode",
   "categories": [
     "Other"
   ],
