@@ -10,6 +10,9 @@ interface IOptions {
   commandText?: string;
 }
 
+let rubyConfig: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("ruby");
+let railsRoot: string = rubyConfig.get("specRailsRoot") || ".";
+let topLevelAppFolders: Array<string> = rubyConfig.get("specTopLevelAppFolders") || ["app"];
 let lastCommandText: string;
 let activeTerminals: {[index: string]: vscode.Terminal} = {};
 
@@ -22,17 +25,23 @@ vscode.window.onDidCloseTerminal((terminal: vscode.Terminal) => {
   }
 });
 
+function extractPath(options: IOptions, editor: vscode.TextEditor | undefined): string {
+  let pathString = options.path || editor?.document.fileName || "";
+  let pathWithRoot = railsRoot + pathString;
+  return vscode.workspace.asRelativePath(pathWithRoot, false);
+}
+
 export function runSpecFile(options: IOptions): void {
   let editor: vscode.TextEditor | undefined = vscode.window?.activeTextEditor,
-    path = vscode.workspace.asRelativePath(options.path || editor?.document.fileName || "", false),
+    path = extractPath(options, editor),
     pattern = getTestFilePattern(),
-    fileName = toSpecPath(path, pattern);
+    fileName = toSpecPath(path, pattern, railsRoot, topLevelAppFolders);
 
   if (!editor || (!isSpecDirectory(fileName, pattern) && !isSpec(fileName, pattern) && !options.commandText)) {
     return;
   }
 
-  if (vscode.workspace.getConfiguration("ruby").get("specSaveFile")) {
+  if (rubyConfig.get("specSaveFile")) {
     vscode.window.activeTextEditor?.document?.save();
   }
 
@@ -75,7 +84,7 @@ function executeInTerminal(fileName: string, options: IOptions): void {
 }
 
 function executeCommand(specTerminal: vscode.Terminal, fileName: string, options: IOptions): void {
-  specTerminal.show(shouldFreserveFocus());
+  specTerminal.show(shouldPreserveFocus());
 
   let lineNumberText = options.lineNumber ? `:${options.lineNumber}` : "",
     commandText = options.commandText || `${getSpecCommand()} ${fileName}${lineNumberText}`;
@@ -113,28 +122,28 @@ function getSpecCommand(): unknown {
   }
 }
 
-function shouldFreserveFocus(): boolean {
-  return !vscode.workspace.getConfiguration("ruby").get("specFocusTerminal");
+function shouldPreserveFocus(): boolean {
+  return !rubyConfig.get("specFocusTerminal");
 }
 
 function shouldClearTerminal(): unknown {
-  return vscode.workspace.getConfiguration("ruby").get("specClearTerminal");
+  return rubyConfig.get("specClearTerminal");
 }
 
 function customSpecCommand(): unknown {
-  return vscode.workspace.getConfiguration("ruby").get("specCommand");
+  return rubyConfig.get("specCommand");
 }
 
 function isZeusActive(): unknown {
-  return vscode.workspace.getConfiguration("ruby").get("specGem") === "zeus";
+  return rubyConfig.get("specGem") === "zeus";
 }
 
 function getTestFilePattern(): string {
-  return vscode.workspace.getConfiguration("ruby").get("specPattern") || "spec";
+  return rubyConfig.get("specPattern") || "spec";
 }
 
 function getZeusStartTimeout(): number {
-  return vscode.workspace.getConfiguration("ruby").get("zeusStartTimeout") || 0;
+  return rubyConfig.get("zeusStartTimeout") || 0;
 }
 
 function zeusTerminalInit(): void {

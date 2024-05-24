@@ -79,6 +79,18 @@
           "default": "",
           "description": "Defines a custom command to run for specs (i.e. 'spring rspec')"
         },
+        "ruby.specTopLevelFolders": {
+          "type": "array",
+          "default": [
+            "app"
+          ],
+          "description": "Defines the top level folders that contain spec files."
+        },
+        "ruby.specRailsRoot": {
+          "type": "string",
+          "default": ".",
+          "description": "Defines the root of the Rails project"
+        },
         "ruby.specFocusTerminal": {
           "type": "boolean",
           "default": true,
