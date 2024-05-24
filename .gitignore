@@ -2,7 +2,17 @@
 .DS_Store
 
 out
+dist/
 node_modules
-typings
+
 npm-debug.log*
-.vscode-test
+.vscode-test/
+*.vsix
+
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
