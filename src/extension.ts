@@ -21,14 +21,17 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(vscode.commands.registerCommand("extension.runFileSpecs", () => terminal.runSpecFile({})));
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.runSpecsFromMenu", (fileUri?: vscode.Uri) => {
-      terminal.runSpecFile({path: fileUri.fsPath});
+      terminal.runSpecFile({path: fileUri?.fsPath});
     })
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.runSpecLine", () => {
-      let currentPosition: vscode.Position = vscode.window.activeTextEditor.selection.active;
-      terminal.runSpecFile({lineNumber: currentPosition.line + 1});
+      let activeCursorPos = vscode.window?.activeTextEditor?.selection.active;
+      if (activeCursorPos !== undefined) {
+        let currentPosition: vscode.Position = activeCursorPos;
+        terminal.runSpecFile({lineNumber: currentPosition.line + 1});
+      }
     })
   );
 

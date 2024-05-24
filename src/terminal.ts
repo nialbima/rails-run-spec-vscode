@@ -23,8 +23,8 @@ vscode.window.onDidCloseTerminal((terminal: vscode.Terminal) => {
 });
 
 export function runSpecFile(options: IOptions): void {
-  let editor: vscode.TextEditor = vscode.window.activeTextEditor,
-    path = vscode.workspace.asRelativePath(options.path || editor.document.fileName, false),
+  let editor: vscode.TextEditor | undefined = vscode.window?.activeTextEditor,
+    path = vscode.workspace.asRelativePath(options.path || editor?.document.fileName || "", false),
     pattern = getTestFilePattern(),
     fileName = toSpecPath(path, pattern);
 
@@ -33,7 +33,7 @@ export function runSpecFile(options: IOptions): void {
   }
 
   if (vscode.workspace.getConfiguration("ruby").get("specSaveFile")) {
-    vscode.window.activeTextEditor.document.save();
+    vscode.window.activeTextEditor?.document?.save();
   }
 
   let isZeusInit = isZeusActive() && !activeTerminals[getTerminalName(ZEUS_TERMINAL_NAME)];
@@ -86,7 +86,9 @@ function executeCommand(specTerminal: vscode.Terminal, fileName: string, options
 }
 
 function getTerminalName(prefix: string): string {
-  return [prefix, vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri).name].join(" ");
+  const activeTextEditor = vscode.window?.activeTextEditor;
+  const documentUri = activeTextEditor?.document?.uri || vscode.Uri.file("");
+  return [prefix, vscode.workspace?.getWorkspaceFolder(documentUri)?.name].join(" ");
 }
 
 function getOrCreateTerminal(prefix: string): vscode.Terminal {
@@ -124,15 +126,15 @@ function customSpecCommand(): unknown {
 }
 
 function isZeusActive(): unknown {
-  return vscode.workspace.getConfiguration("ruby").get("specGem") == "zeus";
+  return vscode.workspace.getConfiguration("ruby").get("specGem") === "zeus";
 }
 
 function getTestFilePattern(): string {
-  return vscode.workspace.getConfiguration("ruby").get("specPattern");
+  return vscode.workspace.getConfiguration("ruby").get("specPattern") || "spec";
 }
 
 function getZeusStartTimeout(): number {
-  return vscode.workspace.getConfiguration("ruby").get("zeusStartTimeout");
+  return vscode.workspace.getConfiguration("ruby").get("zeusStartTimeout") || 0;
 }
 
 function zeusTerminalInit(): void {
@@ -148,5 +150,5 @@ function isSpec(fileName: string, pattern: string): boolean {
 }
 
 function isSpecDirectory(fileName: string, pattern: string): boolean {
-  return fileName.indexOf(pattern) > -1 && fileName.indexOf(".rb") == -1;
+  return fileName.indexOf(pattern) > -1 && fileName.indexOf(".rb") === -1;
 }

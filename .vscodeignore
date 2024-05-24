@@ -1,9 +1,13 @@
 .vscode/**
 .vscode-test/**
-out/test/**
-test/**
+out/**
+node_modules/**
 src/**
-**/*.map
 .gitignore
-tsconfig.json
+.yarnrc
+esbuild.js
 vsc-extension-quickstart.md
+**/.eslintrc.json
+**/*.map
+**/*.ts
+**/.vscode-test.*
